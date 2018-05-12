@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PhonePresenter">
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+<title>PhonePresenter Pairing</title>
+<link rel="shortcut icon" href="/resources/img/icon.ico">
+<link rel="apple-touch-icon" href="/resources/img/icon.png">
+<link rel="stylesheet" href="resources/css/framework7.material.min.css">
+<link rel="stylesheet" href="resources/css/addtohomescreen.css">
+<link rel="stylesheet" href="resources/css/animate.css">
+<link rel="stylesheet" href="resources/css/framework7.material.colors.min.css">
+<script src="resources/js/jquery.min.js"></script>
+<style>
+.ipinput{
+text-align:center;border: 1px solid lightgray !important;max-width:15%;
+}
+.dash{
+margin-left:1%;
+margin-right:1%;
+}
+</style>
+</head>
+<body ng-app="">
+<div class="statusbar-overlay"></div>
+
+<div class="views">
+  <div class="view view-main">
+    <div class="pages navbar-through toolbar-through navbar-fixed">
+      <div data-page="index" class="page">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="center">PhonePresenter Pairing</div>
+          </div>
+        </div>
+        <div class="page-content">
+        <h3 style="color:red;text-align:center;display:none;" class="animated fadeInDown" id="con_error">Pairing failed.  Check that you entered the numbers correctly.</h3>
+          <div class="content-block">
+            <form id="connect_form" name="connect_form" ng-model="connect_form">
+            <div class="list-block">
+                  <div class="item-content">
+                    <div class="item-inner">
+                <input class="ipinput" required type="number" maxlength="4" name="Input0" ng-model="Input0" id="0" pattern="\d*" /><b class="dash">-</b>
+                <input class="ipinput" required type="number" maxlength="4" id="1" name="Input1" ng-model="Input1" pattern="\d*" /><b class="dash">-</b>
+                <input class="ipinput" required type="number" maxlength="4" id="2" name="Input2" ng-model="Input2" pattern="\d*" /><b class="dash">-</b>
+                <input class="ipinput" required type="number" maxlength="4" id="3" name="Input3" ng-model="Input3" pattern="\d*" /><b class="dash">-</b>
+                <input class="ipinput" required type="number" name="Input4" ng-model="Input4" id="4" pattern="\d*" />
+                      </div>
+                    </div>
+             </div>
+            </form>
+            <div style="max-width:320px;margin-left:auto;margin-right:auto;">
+              <input type="button" ng-show="connect_form.$valid" id="connect_submit" onclick="pair()" class="button button-big button-fill button-raised color-blue" value="Pair Device" />
+              <input type="button" ng-hide="connect_form.$valid" id="connect_submit" class="button button-big button-fill button-raised color-blue disabled" value="Pair Device" />
+            <div style="text-align:center;"><span class="preloader" id="load_pulser" style="display:none;"></span></div></div>
+          </div>
+          <div class="content-block">
+            <div class="content-block-inner">
+            <p>Having trouble pairing?  Read the <a target="_blank" href="http://support.phonepresenter.com/troubleshooting">Troubleshooting Guide</a>.</p>
+          </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<script type="text/javascript" src="resources/js/framework7.min.js"></script>
+<script type="text/javascript" src="resources/js/phonepresenter.js"></script>
+<script type="text/javascript" src="resources/js/angular.min.js"></script>
+<script type="text/javascript" src="resources/js/addtohomescreen.min.js"></script>
+<script>
+addToHomescreen({
+   skipFirstVisit: true,
+   maxDisplayCount: 1,
+   message: "Add this webapp to your homescreen for even faster pairing!"
+});
+function pair(){
+zero = $("#0").val();
+one = $("#1").val();
+two = $("#2").val();
+three = $("#3").val();
+four = $("#4").val();
+$("#con_error").hide();
+$("#connect_submit").hide();
+$("#load_pulser").show();
+  $.ajax({url: "http://"+zero+"."+one+"."+two+"."+three+":"+four+"/ishere",
+ timeout: 10000,
+ dataType: "text",
+ success: function(result){
+   $("#load_pulser").hide();
+   $("#connect_submit").show();
+       if(result == "PhonePresenter is here"){
+       window.location = "http://"+zero+"."+one+"."+two+"."+three+":"+four+"/login"
+       }
+       if(result != "PhonePresenter is here"){
+       $("#con_error").show();
+       }
+   },
+ error: function(result){
+   $("#load_pulser").hide();
+   $("#connect_submit").show();
+   $("#con_error").show();
+ }
+});
+};
+</script>
+</body>
+</html>
